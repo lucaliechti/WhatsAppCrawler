@@ -35,6 +35,7 @@ public class History {
 				switch(message.getUserMessageType()) {
 					case TEXT_MESSAGE:
 						stat.increaseLengthOfTextMessages(message.getContent().length());
+						stat.increaseNumberOfEmojis(message.getNumberOfEmojis());
 						break;
 					case IMAGE_MESSAGE:
 						stat.increaseNumberOfImages();
@@ -57,11 +58,14 @@ public class History {
 	}
 
 	private String formattedStats() {
-		String stats = "Participant\t#Msg\tl.Msg\tø l.Msg\n";
+		String stats = "Participant\t#Msg\tl.Msg\tavg.l.Msg\t#img\t#vid\t#loc\t#emoji\t%emoji\n";
 		for(String participant : participants){
 			UserStatistic stat = userStats.get(participant);
-			stat.calculateAverageLengthOfTextMessages();
-			stats += participant + "\t" + stat.getNumberOfMessages() + "\t" + stat.getLengthOfTextMessages() + "\t" + String.format("%.2f", stat.getAverageLengthOfTextMessages()) + "\n";
+			stat = stat.calculateAverageLengthOfTextMessages();
+			stat = stat.calculateEmojiRatio();
+			stats += participant + "\t" + stat.getNumberOfMessages() + "\t" + stat.getLengthOfTextMessages() + "\t" + String.format("%.2f", stat.getAverageLengthOfTextMessages()) + 
+					 "\t" + stat.getNumberOfImages() + "\t" + stat.getNumberOfVideos() + "\t" + stat.getNumberOfLocations() + 
+					 "\t" + stat.getNumberOfEmojis() + "\t" + String.format("%.2f", 100*stat.getEmojiRatio()) + "\n";
 			userStats.put(participant, stat);
 		}
 		return stats;
