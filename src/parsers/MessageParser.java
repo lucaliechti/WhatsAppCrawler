@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import com.vdurmont.emoji.EmojiManager;
 import com.vdurmont.emoji.EmojiTrie;
@@ -68,7 +70,7 @@ public class MessageParser {
 	}
 	
 	//counts the emojis in a string.
-	//at the moment, country flags count double because they are composite of two other emojis.
+	//at the moment, composite emojis count between double and quadruple.
 	//maybe fix in the future.
 	private int countEmojis(String content) {
 		int emojis = 0;
@@ -94,12 +96,14 @@ public class MessageParser {
 		return emojis;
 	}
 
-	private Date parseDate(String _date) {
+	private Calendar parseDate(String _date) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CET"));
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy, hh:mm:ss");
 		Date date = new Date();
 		try {
-			date = format.parse(_date.substring(0,6) + "20" + _date.substring(7));
+			date = format.parse(_date.substring(0,6) + "20" + _date.substring(6));
+			cal.setTime(date);
 		} catch (ParseException e) { e.printStackTrace(); }
-		return date;
+		return cal;
 	}
 }

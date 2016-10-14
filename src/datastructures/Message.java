@@ -1,9 +1,9 @@
 package datastructures;
 
-import java.util.Date;
+import java.util.Calendar;
 
 public class Message {
-	private Date messageDate;
+	private Calendar messageDate;
 	private String messageSender;
 	private String messageContent;
 	private int numberOfEmojis;
@@ -22,14 +22,14 @@ public class Message {
 	
 	public Message(){}
 	
-	public Date getDate() {return messageDate;}
+	public Calendar getDate() {return messageDate;}
 	public String getSender() {return messageSender;}
 	public String getContent() {return messageContent;}
 	public int getNumberOfEmojis() {return numberOfEmojis;}
 	public MessageType getType() {return messageType;}
 	public UserMessageType getUserMessageType() {return userMessageType;}
 	
-	public void setDate(Date _date) {this.messageDate = _date;}
+	public void setDate(Calendar _cal) {this.messageDate = _cal;}
 	public void setSender(String _sender) {this.messageSender = _sender;}
 	public void setContent(String _content) {this.messageContent = _content;}
 	public void setNumberOfEmojis(int _num) {this.numberOfEmojis = _num;}
