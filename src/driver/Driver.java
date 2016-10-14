@@ -8,7 +8,7 @@ import parsers.MessageParser;
 
 public class Driver {
 	public static void main(String[] args){
-		String file = "/Users/luca/Dropbox/Zeugs/Chats/zetcom.txt";
+		String file = "C:\\Users\\Luca Liechti\\Desktop\\_chat.txt";
 		MessageParser parser = new MessageParser();
 		History history = new History();
 	
