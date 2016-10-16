@@ -8,13 +8,14 @@ import parsers.MessageParser;
 
 public class Driver {
 	public static void main(String[] args){
-		String file = "C:\\Users\\Luca Liechti\\Dropbox\\Zeugs\\Chats\\pump.txt";
+		String file = "C:\\Users\\Luca Liechti\\Dropbox\\Zeugs\\Chats\\aids.txt";
 		MessageParser parser = new MessageParser();
 		History history = new History();
 	
 		ArrayList<String> parsedMessages = parser.splitMessages(file);
 		for(String message : parsedMessages)
 			history.addMessage(parser.parseMessage(message));
+		history.calculateValues();
 		history.printUserStatistics();
 	}
 }

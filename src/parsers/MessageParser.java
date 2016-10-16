@@ -64,7 +64,7 @@ public class MessageParser {
 		else{
 			message.setMessageType(Message.MessageType.SYSTEM_MESSAGE);
 			message.setSender("System");
-			message.setContent(mes.substring(20));
+			message.setContent(mes.substring(21));
 		}
 		return message;
 	}
