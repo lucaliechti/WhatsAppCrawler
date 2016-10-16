@@ -15,7 +15,8 @@ public class Message {
 		LOCATION_MESSAGE,
 		IMAGE_MESSAGE,
 		VIDEO_MESSAGE,
-		TEXT_MESSAGE
+		TEXT_MESSAGE,
+		VCARD_MESSAGE
 	}
 	private MessageType messageType;
 	private UserMessageType userMessageType;

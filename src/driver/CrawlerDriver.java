@@ -8,7 +8,7 @@ import parsers.MessageParser;
 
 public class CrawlerDriver {
 	public static void main(String[] args){
-		String file = "C:\\Users\\Luca Liechti\\Dropbox\\Zeugs\\Chats\\lena.txt";
+		String file = "C:\\Users\\Luca Liechti\\Dropbox\\Zeugs\\Chats\\pump.txt";
 		MessageParser parser = new MessageParser();
 		History history = new History();
 	

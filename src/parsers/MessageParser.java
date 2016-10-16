@@ -12,16 +12,11 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import com.vdurmont.emoji.EmojiManager;
-import com.vdurmont.emoji.EmojiTrie;
-import com.vdurmont.emoji.EmojiTrie.Matches;
+import com.vdurmont.emoji.EmojiParser;
 
 import datastructures.Message;
 
-public class MessageParser {
-	private final int MAX_EMOJI_LENGTH = 2; //number of CHARs an emoji can take up
-	private final int MAX_COMPOSITE_EMOJIS = 4; //biggest number of Emojis to compose another Emoji
-	private EmojiTrie et = new EmojiTrie(EmojiManager.getAll());
-	
+public class MessageParser {	
 	public ArrayList<String> splitMessages(String file){
 		ArrayList<String> parsedMessages = new ArrayList<String>();
 		try{
@@ -56,7 +51,7 @@ public class MessageParser {
 			message.setContent(content);
 			if(content.equals("<‎image omitted>")) message.setUserMessageType(Message.UserMessageType.IMAGE_MESSAGE);
 			else if (content.equals("<‎video omitted>")) message.setUserMessageType(Message.UserMessageType.VIDEO_MESSAGE);
-			//TODO: check for vCard type messages
+			else if (content.equals("<‎vCard omitted>")) message.setUserMessageType(Message.UserMessageType.VCARD_MESSAGE);
 			else if(content.matches("(\\W|\\S)?location: https://maps.google.com/\\?q=-?\\d{1,2}.\\d{6},-?\\d{1,2}.\\d{6}")) message.setUserMessageType(Message.UserMessageType.LOCATION_MESSAGE);
 			else {
 				message.setUserMessageType(Message.UserMessageType.TEXT_MESSAGE);
@@ -71,30 +66,14 @@ public class MessageParser {
 		return message;
 	}
 	
-	//counts the emojis in a string.
-	//at the moment, composite emojis count between double and quadruple.
-	//maybe fix in the future.
-	public int countEmojis(String content) {
+	//super awkward, but works
+	public int countEmojis(String content){
 		int emojis = 0;
-		char[] currentLetter;
-		int i = 0;
-		while(i < content.length()){
-			for(int j = 1; j <= MAX_EMOJI_LENGTH; j++){
-				if(i+j <= content.length())
-					currentLetter = content.substring(i, i+j).toCharArray();
-				else
-					currentLetter = content.substring(i, content.length()-1).toCharArray();
-				if(et.isEmoji(currentLetter) == Matches.EXACTLY){
-					System.out.println(currentLetter);
-					emojis++;
-					if(i+j == content.length())
-						return emojis;
-					i+=j;
-					j=0;
-				}
-				else if(j == MAX_EMOJI_LENGTH)
-					i++;
-			}
+		content = EmojiParser.parseToAliases(content);
+		String[] candidates = content.split(":");
+		for(int i = 1; i < candidates.length; i++) {
+			if(candidates[i].contains("|")) candidates[i] = candidates[i].split("|")[0];
+			if(!(EmojiManager.getForAlias(candidates[i]) == null)) emojis++;
 		}
 		return emojis;
 	}

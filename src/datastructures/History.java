@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.vdurmont.emoji.EmojiParser;
+
+import datastructures.Message.MessageType;
+
 public class History {
 	private ArrayList<Message> messages;
 	private HashSet<String> participants;
@@ -54,9 +58,11 @@ public class History {
 				month.increaseNumberOfMessages();
 				switch(message.getUserMessageType()) {
 					case TEXT_MESSAGE:
-						stat.increaseLengthOfTextMessages(message.getContent().length());
-						stat.increaseNumberOfEmojis(message.getNumberOfEmojis());
-						month.increaseLengthOfTextMessages(message.getContent().length());
+						int numberOfEmojis = message.getNumberOfEmojis();
+						int lengthWithoutEmojis = EmojiParser.removeAllEmojis(message.getContent()).length();
+						stat.increaseLengthOfTextMessages(lengthWithoutEmojis + numberOfEmojis);
+						stat.increaseNumberOfEmojis(numberOfEmojis);
+						month.increaseLengthOfTextMessages(lengthWithoutEmojis + numberOfEmojis);
 						break;
 					case IMAGE_MESSAGE:
 						stat.increaseNumberOfImages();
@@ -66,6 +72,9 @@ public class History {
 						break;
 					case LOCATION_MESSAGE:
 						stat.increaseNumberOfLocations();
+						break;
+					case VCARD_MESSAGE:
+						stat.increaseNumberOfVcards();
 						break;
 				}
 		}
@@ -88,7 +97,7 @@ public class History {
 	}
 
 	private String formattedStats() {
-		String stats = "Participant\tdays\tavg.#Msg\tavg.l/day\t#Msg\tl.Msg\tavg.l.Msg\t#img\t#vid\t#loc\t#emoji\t%emoji\n";
+		String stats = "Participant\tdays\tavg.#Msg\tavg.l/day\t#Msg\tl.Msg\tavg.l.Msg\t#img\t#vid\t#loc\t#vcard\t#emoji\t%emoji\n";
 		for(String participant : participants){
 			UserStatistic stat = userStats.get(participant);
 			stats += participant + 
@@ -96,7 +105,7 @@ public class History {
 					 "\t" + String.format("%.2f", (double)stat.getNumberOfMessages()/(double)joinLeaveHistory.getMembershipDays(participant)) +
 					 "\t" + String.format("%.2f", (double)stat.getLengthOfTextMessages()/(double)joinLeaveHistory.getMembershipDays(participant)) + "\t" + stat.getNumberOfMessages() +
 					 "\t" + stat.getLengthOfTextMessages() + "\t" + String.format("%.2f", stat.getAverageLengthOfTextMessages()) + 
-					 "\t" + stat.getNumberOfImages() + "\t" + stat.getNumberOfVideos() + "\t" + stat.getNumberOfLocations() + 
+					 "\t" + stat.getNumberOfImages() + "\t" + stat.getNumberOfVideos() + "\t" + stat.getNumberOfLocations() + "\t" + stat.getNumberOfVcards() +
 					 "\t" + stat.getNumberOfEmojis() + "\t" + String.format("%.2f", 100*stat.getEmojiRatio()) + "\n";
 		}
 		return stats;
@@ -151,8 +160,10 @@ public class History {
 		return yearString;
 	}
 	
-	//that's not always the start date though
 	protected Calendar getStartDate(){
-		return messages.get(0).getDate();
+		if(messages.get(0).getType() == MessageType.SYSTEM_MESSAGE && !messages.get(0).getContent().contains("You created"))
+			return messages.get(1).getDate();
+		else
+			return messages.get(0).getDate();
 	}
 }

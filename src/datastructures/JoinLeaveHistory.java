@@ -15,7 +15,6 @@ public class JoinLeaveHistory {
 	private HashMap<String, ArrayList<JoinLeaveAction>> actions;
 	private HashMap<String, Long> memberships;
 	private final String you = "Luca";
-	
 	private enum ActionType {
 		JOIN_ACTION,
 		LEAVE_ACTION
@@ -92,30 +91,12 @@ public class JoinLeaveHistory {
 				}
 				lastAction = currentAction;
 			}
-			if(lastAction.getAction() == ActionType.JOIN_ACTION){ //if user is still in chat
-				System.out.println("Added " + ChronoUnit.DAYS.between(lastAction.getDate().toInstant(), now.toInstant()) + " days for " + participant);
+			if(lastAction.getAction() == ActionType.JOIN_ACTION) //if user is still in chat
 				days += ChronoUnit.DAYS.between(lastAction.getDate().toInstant(), now.toInstant());
-			}
 			if(days == 0l) days = 1l; //prevents division by zero
 			memberships.put(participant, days);
 		}
 	}
-
-//	@Override
-//	public String toString(){
-//		SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy");
-//		String string = "";
-//		Set<String> participants = actions.keySet();
-//		for(String part : participants){
-//			string += part + ": ";
-//			ArrayList<JoinLeaveAction> set = actions.get(part);
-//			for(JoinLeaveAction action : set){
-//				string += format1.format(action.getDate().getTime()) + ": " + action.getAction() + " - ";
-//			}
-//			string += "\n";
-//		}
-//		return string;
-//	}
 		
 	protected long getMembershipDays(String participant) {
 		return memberships.get(participant);
@@ -138,6 +119,4 @@ public class JoinLeaveHistory {
 		if(!actions.containsKey(participant))
 			actions.put(participant, new ArrayList<JoinLeaveAction>());
 	}
-
-
 }
