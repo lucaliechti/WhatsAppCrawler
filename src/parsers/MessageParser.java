@@ -19,6 +19,7 @@ import datastructures.Message;
 
 public class MessageParser {
 	private final int MAX_EMOJI_LENGTH = 2; //number of CHARs an emoji can take up
+	private final int MAX_COMPOSITE_EMOJIS = 4; //biggest number of Emojis to compose another Emoji
 	private EmojiTrie et = new EmojiTrie(EmojiManager.getAll());
 	
 	public ArrayList<String> splitMessages(String file){
@@ -55,6 +56,7 @@ public class MessageParser {
 			message.setContent(content);
 			if(content.equals("<‎image omitted>")) message.setUserMessageType(Message.UserMessageType.IMAGE_MESSAGE);
 			else if (content.equals("<‎video omitted>")) message.setUserMessageType(Message.UserMessageType.VIDEO_MESSAGE);
+			//TODO: check for vCard type messages
 			else if(content.matches("(\\W|\\S)?location: https://maps.google.com/\\?q=-?\\d{1,2}.\\d{6},-?\\d{1,2}.\\d{6}")) message.setUserMessageType(Message.UserMessageType.LOCATION_MESSAGE);
 			else {
 				message.setUserMessageType(Message.UserMessageType.TEXT_MESSAGE);
@@ -72,7 +74,7 @@ public class MessageParser {
 	//counts the emojis in a string.
 	//at the moment, composite emojis count between double and quadruple.
 	//maybe fix in the future.
-	private int countEmojis(String content) {
+	public int countEmojis(String content) {
 		int emojis = 0;
 		char[] currentLetter;
 		int i = 0;
@@ -83,6 +85,7 @@ public class MessageParser {
 				else
 					currentLetter = content.substring(i, content.length()-1).toCharArray();
 				if(et.isEmoji(currentLetter) == Matches.EXACTLY){
+					System.out.println(currentLetter);
 					emojis++;
 					if(i+j == content.length())
 						return emojis;

@@ -6,9 +6,9 @@ import datastructures.History;
 
 import parsers.MessageParser;
 
-public class Driver {
+public class CrawlerDriver {
 	public static void main(String[] args){
-		String file = "C:\\Users\\Luca Liechti\\Dropbox\\Zeugs\\Chats\\aids.txt";
+		String file = "C:\\Users\\Luca Liechti\\Dropbox\\Zeugs\\Chats\\lena.txt";
 		MessageParser parser = new MessageParser();
 		History history = new History();
 	

@@ -85,7 +85,6 @@ public class History {
 		System.out.println("Total participants (past and present): " + participants.size() + "\n");
 		System.out.println(formattedStats());
 		System.out.println(formattedActivityStats());
-		System.out.println(joinLeaveHistory);
 	}
 
 	private String formattedStats() {
