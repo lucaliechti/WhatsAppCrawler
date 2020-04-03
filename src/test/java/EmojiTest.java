@@ -1,13 +1,12 @@
-package tests;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import parsers.MessageParser;
 
 public class EmojiTest {
-	
+
 	MessageParser parser = new MessageParser();
-	
+
 	@Test
 	public void countRegularEmojis(){
 		String string_1_emoji = "🦄";
@@ -20,7 +19,7 @@ public class EmojiTest {
 		assertEquals(2, int_2_emoji);
 		assertEquals(3, int_3_emoji);
 	}
-	
+
 	@Test
 	public void countFlagEmojis(){
 		String flagPt1 = "🇧";
@@ -33,7 +32,7 @@ public class EmojiTest {
 		assertEquals(1, flag2Emojis);
 		assertEquals(1, flagEmojis); //Composite of 2 must count as 1
 	}
-	
+
 	@Test
 	public void countFamilyEmojis(){
 		String fam1 = "👩";
