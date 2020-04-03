@@ -21,7 +21,10 @@ public class MessageParser {
 	private static final String IMAGE_MESSAGE_TEXT = "image omitted";
 	private static final String VIDEO_MESSAGE_TEXT = "‎video omitted";
 	private static final String VCARD_MESSAGE_TEXT = "vCard omitted";
-	private static final String LOCATION_MESSAGE_REGEX = "(\\W|\\S)?location: https://maps.google.com/\\?q=-?\\d{1,2}.\\d{6},-?\\d{1,2}.\\d{6}";
+	private static final String LOCATION_MESSAGE_REGEX =
+			"(\\W|\\S)?location: https://maps.google.com/\\?q=-?\\d{1,2}.\\d{6},-?\\d{1,2}.\\d{6}";
+
+	private static final SimpleDateFormat WHATSAPP_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy, hh:mm:ss");
 
 	public List<String> splitMessages(String file){
 		ArrayList<String> parsedMessages = new ArrayList<>();
@@ -52,15 +55,17 @@ public class MessageParser {
 		return line == null ? null : line.replace("\u200E", "");
 	}
 
-	public Message parseMessage(String mes){
+	public Message parseMessage(String mes) {
 		Message message = new Message();
 		message.setDate(parseDate(mes.substring(DATE_START_POS, DATE_END_POS)));
-		if (mes.substring(DATE_END_POS).contains(":")){
+
+		if (mes.substring(DATE_END_POS).contains(":")) {
 			message.setMessageType(Message.MessageType.USER_MESSAGE);
 			String sender = mes.substring(20).substring(0, mes.substring(20).indexOf(':'));
 			message.setSender(sender);
 			String content = mes.substring(20).substring(mes.substring(19).indexOf(':')+1);
 			message.setContent(content);
+
 			if (content.equals(IMAGE_MESSAGE_TEXT)) {
 				message.setUserMessageType(Message.UserMessageType.IMAGE_MESSAGE);
 			}
@@ -72,6 +77,7 @@ public class MessageParser {
 			}
 			else if (content.matches(LOCATION_MESSAGE_REGEX)) {
 				message.setUserMessageType(Message.UserMessageType.LOCATION_MESSAGE);
+				System.out.println(content);
 			}
 			else {
 				message.setUserMessageType(Message.UserMessageType.TEXT_MESSAGE);
@@ -86,26 +92,30 @@ public class MessageParser {
 		return message;
 	}
 
-	//super awkward, but works
-	public int countEmojis(String content){
+	public int countEmojis(String content) {
 		int emojis = 0;
 		content = EmojiParser.parseToAliases(content);
 		String[] candidates = content.split(":");
-		for(int i = 1; i < candidates.length; i++) {
-			if(candidates[i].contains("|")) candidates[i] = candidates[i].split("|")[0];
-			if(!(EmojiManager.getForAlias(candidates[i]) == null)) emojis++;
+		for (String candidate : candidates) {
+			if (candidate.contains("|")) {
+				candidate = candidate.split("\\|")[0];
+			}
+			if (!(EmojiManager.getForAlias(candidate) == null)) {
+				emojis++;
+			}
 		}
 		return emojis;
 	}
 
-	private Calendar parseDate(String _date) {
+	private Calendar parseDate(String date) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("CET"));
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy, hh:mm:ss");
-		Date date;
+		Date parsedDate;
 		try {
-			date = format.parse(_date.substring(0,6) + "20" + _date.substring(6));
-			cal.setTime(date);
-		} catch (ParseException e) { e.printStackTrace(); }
+			parsedDate = WHATSAPP_DATE_FORMAT.parse(date.substring(0,6) + "20" + date.substring(6));
+			cal.setTime(parsedDate);
+		} catch (ParseException e) {
+			System.out.println("Could not parse date \"" + date + "\"");
+		}
 		return cal;
 	}
 }

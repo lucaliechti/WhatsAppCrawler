@@ -13,8 +13,7 @@ public class CrawlerDriver {
 		History history = new History();
 
 		List<String> parsedMessages = parser.splitMessages(file);
-		for(String message : parsedMessages)
-			history.addMessage(parser.parseMessage(message));
+		parsedMessages.forEach(message -> history.addMessage(parser.parseMessage(message)));
 		history.calculateValues();
 		history.printUserStatistics();
 	}
